@@ -1,0 +1,34 @@
+name: Local CI/CD Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build
+          docker build -t viatab-frontend .
+
+      - name: Build Backend
+        run: |
+          cd backend/ViatabBackend
+          dotnet build --configuration Release
+          docker build -t viatab-backend .
+
+      - name: Deploy to Minikube
+        run: |
+          & minikube -p minikube docker-env | Invoke-Expression
+          kubectl apply -f backend-deployment.yaml
+          kubectl apply -f backend-service.yaml
+          kubectl apply -f frontend-deployment.yaml
+          kubectl apply -f frontend-service.yaml
+          kubectl apply -f postgres-deployment.yaml
+          kubectl apply -f postgres-service.yaml

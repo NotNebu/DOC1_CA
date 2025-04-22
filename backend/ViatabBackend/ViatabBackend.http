@@ -1,0 +1,6 @@
+@ViatabBackend_HostAddress = http://localhost:5157
+
+GET {{ViatabBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
