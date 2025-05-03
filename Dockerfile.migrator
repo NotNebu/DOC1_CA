@@ -1,0 +1,18 @@
+# Dockerfile.migrator
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS migrator
+WORKDIR /app
+
+# Kopier backend-koden ind
+COPY ./backend ./
+
+# Installer dotnet-ef globalt
+RUN dotnet tool install -g dotnet-ef
+
+# Tilføj tools til PATH
+ENV PATH="$PATH:/root/.dotnet/tools"
+
+# Gendan pakker
+RUN dotnet restore
+
+# Default kommando: migrer databasen
+CMD ["dotnet", "ef", "database", "update", "--project", "backend.csproj"]

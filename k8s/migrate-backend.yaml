@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: backend-migrator
+spec:
+  restartPolicy: Never
+  containers:
+    - name: migrator
+      image: viatabloid-migrator
+      imagePullPolicy: Never
+      command: ["sh", "-c"]
+      args:
+        - |
+          echo "📁 Listing /app content..." && \
+          ls -al && \
+          echo "🔍 Searching for .csproj..." && \
+          find . -name "*.csproj" && \
+          export PATH="$PATH:/root/.dotnet/tools" && \
+          dotnet ef database update --project backend.csproj

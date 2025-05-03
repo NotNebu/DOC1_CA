@@ -1,0 +1,42 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:15
+    container_name: viatabloid-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: viatabloid
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - viatabnet
+
+  backend:
+    build: ./backend
+    container_name: viatabloid-backend
+    ports:
+      - "5000:8080"
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+    depends_on:
+      - postgres
+    networks:
+      - viatabnet
+
+  frontend:
+    build: ./frontend
+    container_name: viatabloid-frontend
+    ports:
+      - "3000:80"
+    networks:
+      - viatabnet
+
+volumes:
+  pgdata:
+
+networks:
+  viatabnet:
