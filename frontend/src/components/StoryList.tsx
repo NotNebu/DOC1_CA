@@ -4,13 +4,13 @@ export function StoryList() {
   const [stories, setStories] = useState<any[]>([]);
 
   const fetchStories = async () => {
-    const res = await fetch("http://127.0.0.1:1570/api/stories");
+    const res = await fetch("http://127.0.0.1:30080/api/stories");
     const data = await res.json();
     setStories(data);
   };
 
   const deleteStory = async (id: number) => {
-    await fetch(`http://127.0.0.1:1570/api/stories/${id}`, { method: "DELETE" });
+    await fetch(`http://127.0.0.1:30080/api/stories/${id}`, { method: "DELETE" });
     fetchStories();
   };
 

@@ -5,7 +5,7 @@ export function StoryForm({ onAdd }: { onAdd: () => void }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await fetch("http://127.0.0.1:1570/api/stories", {
+    await fetch("http://127.0.0.1:30080/api/stories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(story),
