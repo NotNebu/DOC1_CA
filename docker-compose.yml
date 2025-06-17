@@ -1,4 +1,5 @@
 version: "3.9"
+
 services:
   postgres:
     image: postgres:15
@@ -14,6 +15,16 @@ services:
       - pgdata:/var/lib/postgresql/data
     networks:
       - viatabnet
+
+  migrator:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrator
+    depends_on:
+      - postgres
+    networks:
+      - viatabnet
+    restart: "on-failure"
 
   backend:
     build: ./backend
