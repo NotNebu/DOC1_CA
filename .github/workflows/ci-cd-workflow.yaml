@@ -37,3 +37,27 @@ jobs:
       - name: Run backend unit tests (dotnet test)
         working-directory: backend.tests
         run: dotnet test
+
+  compose-up:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Docker Compose CLI plugin
+        run: |
+          mkdir -p ~/.docker/cli-plugins/
+          curl -SL https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
+          chmod +x ~/.docker/cli-plugins/docker-compose
+
+      - name: Build and run services using Compose
+        run: docker compose up --build -d
+
+      - name: Show running containers
+        run: docker ps
+
+      - name: Shut down Compose services
+        if: always()
+        run: docker compose down
