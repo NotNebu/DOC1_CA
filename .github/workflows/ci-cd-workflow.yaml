@@ -1,4 +1,4 @@
-name: CI/CD Workflow
+name: CI Workflow
 
 on:
   push:
@@ -7,14 +7,15 @@ on:
   pull_request:
 
 jobs:
-  build-and-deploy:
+  test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js for frontend
+      # Frontend test
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -23,50 +24,16 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: Run Vitest (frontend unit tests)
+      - name: Run frontend unit tests (Vitest)
         working-directory: frontend
         run: npx vitest run
 
-      - name: Set up .NET for backend
+      # Backend test
+      - name: Set up .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
-      - name: Run .NET tests
+      - name: Run backend unit tests (dotnet test)
         working-directory: backend.tests
         run: dotnet test
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Docker info
-        run: docker version
-
-      - name: Install Docker Compose
-        run: |
-              sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
-              sudo chmod +x /usr/local/bin/docker-compose
-              docker-compose version
-
-      - name: Remove previous containers
-        run: docker system prune -af
-
-      - name: Boot up environment with Docker Compose
-        run: docker-compose up -d --build
-
-      - name: Wait for migration to finish
-        run: |
-          echo "Watching migrator logs (may exit quickly)..."
-          docker logs -f migrator || true
-
-      - name: Verify backend health
-        run: |
-          echo "Waiting for backend to respond..."
-          for i in {1..10}; do
-            curl -f http://localhost:5000/health && break
-            sleep 2
-          done
-
-      - name: Clean up containers and volumes
-        if: always()
-        run: docker-compose down -v
