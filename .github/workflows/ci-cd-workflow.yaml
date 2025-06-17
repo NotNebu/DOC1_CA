@@ -38,9 +38,23 @@ jobs:
         working-directory: backend.tests
         run: dotnet test
 
-  compose-up:
+  docker-build:
     runs-on: ubuntu-latest
     needs: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build backend Docker image
+        run: docker build -t viatabloid-backend ./backend
+
+      - name: Build frontend Docker image
+        run: docker build -t viatabloid-frontend ./frontend
+
+  compose-up:
+    runs-on: ubuntu-latest
+    needs: docker-build
 
     steps:
       - name: Checkout repository
