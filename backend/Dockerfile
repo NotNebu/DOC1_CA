@@ -1,4 +1,4 @@
-# Build stage (SDK med EF tools)
+# Build Stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 COPY . .
